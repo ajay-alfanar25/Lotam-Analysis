@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <!-- JWT bearer auth middleware for [Authorize] endpoints (Profile,
+         change-password, etc.) - verifies the token AuthController issues
+         on login using the same Jwt:Secret/Issuer/Audience. -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LotamSentinel.Application\LotamSentinel.Application.csproj" />
+  </ItemGroup>
+
+  <!-- Common template folder (email body + HTML report shell/CSS) - copied
+       next to the built app so LotamSentinel.Application's TemplateLoader
+       can read them at runtime via AppContext.BaseDirectory. Kept as plain
+       files (not embedded resources) specifically so wording/colors/layout
+       can be hand-edited after deploy without a rebuild. -->
+  <ItemGroup>
+    <None Include="Templates\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

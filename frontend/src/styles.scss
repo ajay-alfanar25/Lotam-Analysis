@@ -1,0 +1,296 @@
+/* ============================================================================
+   LOTAM Sentinel — Central Design System
+   Every color used anywhere in the app should trace back to a token defined
+   here. Components must NOT hardcode rgba()/hex colors in their own `styles`
+   arrays for anything semantic (surfaces, accents, status, chart colors) -
+   reference these custom properties (or the matching TS palette in
+   core/theme.ts for cases that need color logic, like chart data or
+   per-technology badge colors) instead. This is what makes the theme
+   reusable and swappable from one place rather than hunting through every
+   component file.
+   ============================================================================ */
+
+:root {
+  /* ---- Base surfaces ---- */
+  --bg: #0a0e1a;
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-2: rgba(255, 255, 255, 0.08);
+  --surface-solid: #131b30;   /* opaque fallback used behind blurred overlays/panels */
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #eef1f8;
+  --text-dim: #93a2c0;
+
+  /* ---- Color palette: 8 named hues, each with a base/soft-bg/border triad.
+     Used for KPI accents, chart series, per-technology tags, nav highlights -
+     anywhere a single "accent blue" used to be the only option. Pick a hue by
+     semantic role where one exists (see below); otherwise cycle through
+     --palette-* via core/theme.ts's PALETTE array for data-driven color
+     (charts, per-item tags) so the same key always gets the same color. ---- */
+  --hue-blue: #5b8cff;
+  --hue-blue-bg: rgba(91, 140, 255, 0.14);
+  --hue-blue-border: rgba(91, 140, 255, 0.35);
+
+  --hue-purple: #a25bff;
+  --hue-purple-bg: rgba(162, 91, 255, 0.14);
+  --hue-purple-border: rgba(162, 91, 255, 0.35);
+
+  --hue-teal: #2dd4bf;
+  --hue-teal-bg: rgba(45, 212, 191, 0.14);
+  --hue-teal-border: rgba(45, 212, 191, 0.35);
+
+  --hue-pink: #f472b6;
+  --hue-pink-bg: rgba(244, 114, 182, 0.14);
+  --hue-pink-border: rgba(244, 114, 182, 0.35);
+
+  --hue-amber: #ffb84f;
+  --hue-amber-bg: rgba(255, 184, 79, 0.14);
+  --hue-amber-border: rgba(255, 184, 79, 0.35);
+
+  --hue-emerald: #34d399;
+  --hue-emerald-bg: rgba(52, 211, 153, 0.14);
+  --hue-emerald-border: rgba(52, 211, 153, 0.35);
+
+  --hue-rose: #ff5c72;
+  --hue-rose-bg: rgba(255, 92, 114, 0.14);
+  --hue-rose-border: rgba(255, 92, 114, 0.35);
+
+  --hue-indigo: #818cf8;
+  --hue-indigo-bg: rgba(129, 140, 248, 0.14);
+  --hue-indigo-border: rgba(129, 140, 248, 0.35);
+
+  --hue-cyan: #22d3ee;
+  --hue-cyan-bg: rgba(34, 211, 238, 0.14);
+  --hue-cyan-border: rgba(34, 211, 238, 0.35);
+
+  /* ---- Semantic roles (map to a hue, but named for WHAT they mean, not
+     which color - change the hue here without hunting every component) ---- */
+  --accent: var(--hue-blue);
+  --accent-2: var(--hue-purple);
+  --accent-3: var(--hue-teal);
+
+  --critical: var(--hue-rose);
+  --high: var(--hue-amber);
+  --medium: var(--hue-blue);
+  --low: var(--hue-emerald);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --blur: 20px;
+  --shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.55);
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk', var(--font);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+}
+
+/* Fixed, non-scrolling mesh of color blobs behind everything - what the
+   glass panels actually blur, and the main source of "colorful" rather than
+   flat-dark. Five hues now instead of four, tuned brighter. */
+body { position: relative; min-height: 100%; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(680px circle at 6% 6%, rgba(91, 140, 255, 0.24), transparent 60%),
+    radial-gradient(620px circle at 94% 12%, rgba(162, 91, 255, 0.20), transparent 55%),
+    radial-gradient(600px circle at 88% 70%, rgba(244, 114, 182, 0.12), transparent 55%),
+    radial-gradient(700px circle at 15% 90%, rgba(45, 212, 191, 0.14), transparent 55%),
+    radial-gradient(650px circle at 50% 45%, rgba(255, 184, 79, 0.07), transparent 60%),
+    var(--bg);
+}
+
+h1, h2, h3, h4 {
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+}
+h1 { font-size: 24px; font-weight: 700; }
+h2 { font-size: 17px; font-weight: 600; }
+h3 { font-size: 12.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; font-family: var(--font); font-weight: 600; }
+
+a { color: var(--accent); text-decoration: none; }
+
+/* ---- Core glass surface, used everywhere via .card ---- */
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  position: relative;
+}
+.card:hover { border-color: var(--border-strong); }
+
+.page {
+  padding: 32px 36px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.grid { display: grid; gap: 18px; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Reusable "badge" - a pill colored from one of the 9 hues via a
+   modifier class, e.g. <span class="badge badge-teal">. Replaces the
+   pattern of every component hand-writing its own colored-pill CSS. ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+@each $hue in "blue", "purple", "teal", "pink", "amber", "emerald", "rose", "indigo", "cyan" {
+  .badge-#{$hue} {
+    background: var(--hue-#{$hue}-bg);
+    color: var(--hue-#{$hue});
+    box-shadow: 0 0 0 1px var(--hue-#{$hue}-border);
+  }
+}
+
+/* ---- Reusable glass overlay + side panel, previously duplicated with
+   hardcoded rgba() in change-explorer, supplier-view, and material-explorer.
+   Use `.glass-overlay` for the backdrop and `.glass-panel` for the sliding
+   panel itself. ---- */
+.glass-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 16, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 50;
+}
+.glass-panel {
+  width: 520px;
+  max-width: 92vw;
+  overflow-y: auto;
+  position: relative;
+  padding: 28px;
+  background: rgba(19, 27, 48, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glass-panel .close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* ---- Reusable read-only text block, previously duplicated per-component ---- */
+.value-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-top: 6px;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.value-box.small { font-size: 11px; max-height: 200px; overflow-y: auto; }
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.data-table th {
+  text-align: left;
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+}
+table.data-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+table.data-table tbody tr { cursor: pointer; transition: background 150ms ease; }
+table.data-table tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+
+input[type='text'], select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 9px 13px;
+  font-size: 13px;
+  font-family: var(--font);
+  transition: border-color 150ms ease, background 150ms ease;
+}
+input[type='text']::placeholder { color: var(--text-dim); }
+input[type='text']:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+:root { color-scheme: dark; }
+select option { background-color: #16223a; color: var(--text); }
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 150ms ease;
+}
+button:hover:not(:disabled) { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.09); transform: translateY(-1px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: white;
+  box-shadow: 0 4px 20px -4px rgba(91, 140, 255, 0.5);
+}
+button.primary:hover:not(:disabled) {
+  box-shadow: 0 6px 24px -4px rgba(91, 140, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+::-webkit-scrollbar-track { background: transparent; }

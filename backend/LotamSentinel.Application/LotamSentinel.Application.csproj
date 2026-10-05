@@ -1,0 +1,100 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Pure .NET PDF text/layout extraction, no native/OS dependencies -->
+    <PackageReference Include="PdfPig" Version="0.1.9" />
+    <!-- 8.0.3, not 8.0.2 - PDFsharp-MigraDoc below needs >= 8.0.3, and
+         leaving this at 8.0.2 causes a NU1605 package-downgrade build
+         error (warning-as-error) once MigraDoc is added as a dependency. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <!-- Free, MIT-licensed PDF generation with no revenue-based licensing
+         restriction (unlike QuestPDF, which requires a paid license for
+         any organization over $1M USD annual revenue - verified before
+         choosing this). Used for the Change/Material export reports. -->
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.4" />
+    <!-- Free, MIT-licensed HTML parser - used to find new LOTAM document
+         links on SEC's listing page without hand-rolled regex-on-HTML.
+         1.5.0+ specifically - 1.1.2 has a known moderate vulnerability
+         (GHSA-pgww-w46g-26qg, mXSS via annotation-xml) fixed in 1.5.0. -->
+    <PackageReference Include="AngleSharp" Version="1.5.1" />
+    <!-- PasswordHasher<TUser> only - deliberately NOT the full
+         Microsoft.AspNetCore.Identity / EF Identity stores package, which
+         would drag in its own user/role schema. Login/reset/JWT are all
+         hand-rolled against AppUser instead (see Auth/ and
+         Api/Controllers/AuthController.cs); this package supplies just the
+         battle-tested PBKDF2 hashing so passwords are never hand-rolled. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
+    <!-- JWT creation (AuthController's login issues the token via
+         JwtTokenService); verification on incoming requests is wired up
+         separately in Api/Program.cs via the JwtBearer package. -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+    <!-- Replaces the legacy System.Net.Mail.SmtpClient (Microsoft explicitly
+         marks it "not recommended for new development" - it has known
+         connect/DNS-fallback issues on some networks and no configurable
+         connect timeout, so a blocked/flaky path just hangs until the OS
+         socket timeout fires as SocketException 10060). MailKit is the
+         standard, actively-maintained replacement with robust connection
+         handling and an explicit Timeout we set below. -->
+    <PackageReference Include="MailKit" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LotamSentinel.Domain\LotamSentinel.Domain.csproj" />
+    <ProjectReference Include="..\LotamSentinel.Infrastructure\LotamSentinel.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <!-- Embedded fonts for PDF export - PDFsharp 6.x on .NET (non-Framework)
+       has no font resolver by default and crashes on the first font it
+       needs otherwise. Liberation Sans/Mono are SIL Open Font License,
+       free for any use - see Reporting/Fonts/LICENSE-fonts.txt. LogicalName
+       is set explicitly so LotamPdfFontResolver.cs's resource-name lookup
+       doesn't depend on guessing the project's RootNamespace. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationSans-Regular.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationSans-Regular.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationSans-Bold.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationSans-Bold.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationSans-Italic.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationSans-Italic.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationSans-BoldItalic.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationSans-BoldItalic.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationMono-Regular.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationMono-Regular.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationMono-Bold.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationMono-Bold.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationMono-Italic.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationMono-Italic.ttf</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reporting/Fonts/LiberationMono-BoldItalic.ttf">
+      <LogicalName>LotamSentinel.Application.Reporting.Fonts.LiberationMono-BoldItalic.ttf</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- alfanar logo for the PDF export's masthead (mirrors the same base64
+       PNG embedded directly in the HTML export's report-shell.html) -
+       embedded as a resource rather than checked into source as a giant
+       string literal. Loaded once by PdfReportRenderer's static
+       constructor and converted to MigraDoc's "base64:<data>" pseudo-path,
+       the documented way to add an in-memory image to a MigraDoc document
+       without writing a temp file to disk (see PdfReportRenderer.cs). -->
+  <ItemGroup>
+    <EmbeddedResource Include="Reporting/Assets/alfanar-logo.png">
+      <LogicalName>LotamSentinel.Application.Reporting.Assets.alfanar-logo.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

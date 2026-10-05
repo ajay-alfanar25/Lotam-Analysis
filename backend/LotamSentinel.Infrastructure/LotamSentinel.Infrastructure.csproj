@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Brings a compatible Microsoft.EntityFrameworkCore version transitively -
+         do not also reference Microsoft.EntityFrameworkCore directly here, to
+         avoid a version-conflict restore error. -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LotamSentinel.Domain\LotamSentinel.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,40 @@
+# Database schema and migration artifacts
+**/*.sql
+**/Migrations/
+**/migrations/
+**/*Migration*
+**/*migration*
+**/migration_v*.sql
+
+# Local application settings
+**/appsettings*.json
+
+# Documentation files
+**/*.md
+**/*.markdown
+**/*.rst
+**/*.adoc
+**/*.txt
+
+# Deployment and design artifacts
+**/*deployment*
+**/*Deployment*
+**/*DEPLOYMENT*
+**/*design*
+**/*Design*
+**/*DESIGN*
+**/deploy/
+**/deployments/
+**/design/
+**/designs/
+**/Dockerfile*
+**/.dockerignore
+
+# Generated build and dependency output
+**/bin/
+**/obj/
+**/node_modules/
+**/.angular/
+**/dist/
+**/coverage/
+**/.vs/

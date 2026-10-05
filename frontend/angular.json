@@ -1,0 +1,88 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "lotam-sentinel-frontend": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/lotam-sentinel-frontend",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              }
+            ],
+            "styles": [
+              "node_modules/leaflet/dist/leaflet.css",
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "leaflet"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kb",
+                  "maximumError": "16kb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "lotam-sentinel-frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "lotam-sentinel-frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "06d8067a-b916-4c9c-9276-28e792c5f468"
+  }
+}
